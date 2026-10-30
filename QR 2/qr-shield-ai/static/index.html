@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QR Shield AI</title><link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav id="nav" aria-label="Main"><div class="logo"><span class="mark">◈</span>QR Shield <b>AI</b></div>
+<button data-view="home">Overview</button><button data-view="scan">QR Scanner</button><button data-view="investigate">Live Investigation</button>
+<button data-view="report">Risk Report</button><button data-view="redirects">Redirect Investigation</button><button data-view="challenge">Safety Challenge</button>
+<button data-view="history">Scan History</button><button data-view="about">How It Works</button>
+<button class="cta" data-view="scan">Scan a QR code</button><p id="mode" class="mode"></p></nav>
+<main id="main" tabindex="-1">
+
+<section id="v-home" class="view"><div class="hero"><div><h1>Scan Smart. Stay Protected.</h1>
+<p class="lead">Investigate QR codes, uncover suspicious destinations, and make safer decisions before you click.</p>
+<div class="row"><button class="btn primary" data-view="scan">Scan QR Code</button><button class="btn" id="home-upload">Upload QR Image</button></div></div>
+<div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="line"></span><div class="demo-steps"><p>decode</p><p>parse URL</p><p>match purpose</p><p>check reputation</p><p>report</p></div></div></div>
+<div class="grid4"><article class="card"><h3>Context-Aware Detection</h3><p>Compares the destination with what the code was supposed to do: payment, event, login, ad, or website.</p></article>
+<article class="card"><h3>Threat Intelligence</h3><p>Server-side reputation lookup. Missing reports never count as proof of safety.</p></article>
+<article class="card"><h3>Explainable Risk Scoring</h3><p>Every point in the score is listed with its reason. Weights are configurable.</p></article>
+<article class="card"><h3>Pre-Visit Protection</h3><p>Nothing opens automatically. A warning screen always comes first.</p></article></div>
+<div class="grid2"><article class="card"><h3>Security statistics <span class="tag">DEMO DATA</span></h3><div class="stats"><p><b>1 in 4</b>sample codes flagged</p><p><b>38%</b>sample mismatch rate</p><p><b>6</b>checks per scan</p></div><p class="muted">Illustrative numbers for the demo. Not live statistics.</p></article>
+<article class="card"><h3>Recent scan activity</h3><ul id="recent" class="plain"></ul></article></div></section>
+
+<section id="v-scan" class="view"><h2>QR Scanner</h2>
+<div class="grid2"><div class="card"><label for="purpose">What is this QR code supposed to be?</label>
+<select id="purpose"><option value="general">General website</option><option value="payment">Payment</option><option value="event">Event registration</option><option value="login">Login / account access</option><option value="advertisement">Advertisement</option></select>
+<label for="expected">Expected domain (optional)</label><input id="expected" placeholder="e.g. mybank.com" autocomplete="off">
+<label for="file">Upload a QR image (PNG or JPG)</label><input id="file" type="file" accept="image/png,image/jpeg">
+<div class="row"><button class="btn" id="cam-start">Start camera</button><button class="btn" id="cam-stop" disabled>Stop camera</button></div>
+<label for="manual">Or paste a link to test without a QR image</label><div class="row"><input id="manual" placeholder="https://example.com/path"><button class="btn" id="manual-go">Use link</button></div>
+<p class="muted">Decoding happens in your browser. Nothing is sent to the server until you press Analyze.</p></div>
+<div class="card"><div class="preview"><video id="video" playsinline muted hidden></video><img id="preview" alt="Uploaded QR code preview" hidden><p id="empty" class="muted">No image yet. Upload a QR code or start the camera.</p></div>
+<p id="status" role="status" aria-live="polite" class="status"></p>
+<h3>Decoded content</h3><pre id="decoded" class="code">Nothing decoded yet.</pre>
+<div class="row"><button class="btn primary" id="analyze" disabled>Analyze destination</button><button class="btn" id="reset">Scan another code</button></div></div></div></section>
+
+<section id="v-investigate" class="view"><h2>Live Investigation</h2><p class="muted">Each stage reflects what actually happened.</p><ol id="stages" class="stages"></ol></section>
+
+<section id="v-report" class="view"><h2>Risk Analysis Report</h2><div id="report"><p class="empty">No report yet. <a href="#" data-view="scan">Scan a QR code</a> to create one.</p></div></section>
+
+<section id="v-redirects" class="view"><h2>Redirect Investigation</h2><div class="row"><button class="btn primary" id="trace">Trace redirects for the current link</button></div>
+<p id="trace-note" class="muted">Scan a QR code first.</p><div id="chain" class="chain"></div><div id="hop" class="card" hidden></div></section>
+
+<section id="v-warning" class="view"><div id="warn" class="card warn"></div></section>
+
+<section id="v-challenge" class="view"><h2>Cyber Safety Challenge</h2><p class="muted">Educational only. These scores never affect scan results. Example links are plain text and cannot be clicked.</p><div id="quiz" class="card"></div></section>
+
+<section id="v-history" class="view"><h2>Scan History</h2><p class="muted">Stored only in this browser: time, purpose, hostname, category and source. No full URLs, queries or keys.</p>
+<div class="row"><input id="hsearch" placeholder="Search hostname" aria-label="Search hostname"><select id="hfilter" aria-label="Filter by category"><option value="">All categories</option><option>green</option><option>amber</option><option>red</option><option>gray</option></select><button class="btn" id="hclear">Clear history</button></div><div id="hlist"></div></section>
+
+<section id="v-about" class="view"><h2>How It Works</h2><div class="card prose"><p>1. Your browser decodes the QR image with jsQR. 2. The link is analyzed by a Python rule engine using real URL parsing. 3. A reputation service is queried from the server, or a labelled demo fixture is used. 4. You get a report listing every factor and its weight. 5. A warning screen stands between you and any external site.</p>
+<h3>Honest limits</h3><p>The score is a transparent sum of rules, not a probability of attack. GREEN means no known threat was found by the available checks. It never means safe. Redirect tracing is simulated unless live tracing is enabled on the server.</p>
+<h3>Privacy</h3><p>The link you analyze is sent to your own Flask server. If a VirusTotal key is configured, only scheme, host and path (no query, fragment or credentials) are sent to VirusTotal. API keys stay on the server.</p></div></section>
+</main>
+<script src="/static/vendor/jsQR.js" onerror="this.remove()"></script><script src="/static/app.js"></script></body></html>
